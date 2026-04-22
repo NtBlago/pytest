@@ -1,0 +1,12 @@
+[2026-04-22 16:50:43] === SESSION START ===
+[2026-04-22 16:50:43] Program started
+[2026-04-22 16:50:43] Team registered successfully. Team ID: 7e56ada7
+[2026-04-22 16:50:43] Reactor created successfully
+[2026-04-22 16:50:45] Simulation speed set to 10.0x
+[2026-04-22 16:50:45] User set simulation speed to 10.0x
+[2026-04-22 16:50:46] Monitoring started with interval=1.0s
+[2026-04-22 16:52:15] AUTO: Temperature 1200.61C exceeds 1200C - initiating cooling
+[2026-04-22 16:52:16] Cooling activated: 10 seconds
+[2026-04-22 16:52:16] Auto-protection triggered at Temp=1200.61, Water=86.90, Rad=130.17
+[2026-04-22 16:52:39] Program stopped by user (KeyboardInterrupt)
+[2026-04-22 16:52:39] === SESSION END ===
