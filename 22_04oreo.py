@@ -1,124 +1,54 @@
 import requests
+import time
 
 API_BASE = "http://mephi.opentoshi.net/api/v1"
-TEAM_NAME = "Reverse_oreo"
+TEAM_NAME = "Reactor_Team_Minimal"
 
 
 class ReactorAPI:
-
-    def init(self):
+    def __init__(self):
         self.team_id = None
-        self.connected = False
         self.register_team()
 
     def register_team(self):
-        try:
-            print(f"[API] Регистрация команды '{TEAM_NAME}'...")
-            response = requests.get(f"{API_BASE}/team/register",
-                                    params={"name": TEAM_NAME},
-                                    timeout=5)
-
-            if response.status_code == 200:
-                data = response.json()
-                self.team_id = data.get("team_id")
-                self.connected = True
-                print(f"[API] Регистрация успешна! Team ID: {self.team_id}")
-                return True
-            else:
-                print(f"[API] Ошибка регистрации: {response.status_code}")
-                self.connected = False
-                return False
-
-        except requests.exceptions.ConnectionError:
-            print("[API] Нет соединения с сервером!")
-            self.connected = False
-            return False
-        except Exception as e:
-            print(f"[API] Ошибка: {e}")
-            self.connected = False
-            return False
+        resp = requests.get(f"{API_BASE}/team/register", params={"name": TEAM_NAME})
+        if resp.status_code == 200:
+            self.team_id = resp.json()["team_id"]
+            print(f"✅ Team ID: {self.team_id}")
+        else:
+            raise Exception("Регистрация не удалась")
 
     def create_reactor(self):
-        if not self.connected:
-            return False
-        try:
-            response = requests.post(f"{API_BASE}/reactor/create_reactor",
-                                     params={"team_id": self.team_id},
-                                     timeout=5)
-            if response.status_code == 200:
-                print("[API] Реактор создан")
-                return True
-        except:
-            pass
-        return False
+        requests.post(f"{API_BASE}/reactor/create_reactor", params={"team_id": self.team_id})
 
     def reset_reactor(self):
-        if not self.connected:
-            return False
-        try:
-            response = requests.post(f"{API_BASE}/reactor/reset_reactor",
-                                     params={"team_id": self.team_id},
-                                     timeout=5)
-            if response.status_code == 200:
-                print("[API] Реактор сброшен")
-                return True
-        except:
-            pass
-        return False
+        requests.post(f"{API_BASE}/reactor/reset_reactor", params={"team_id": self.team_id})
 
     def set_speed(self, speed):
-        if not self.connected:
-            return False
-        try:
-            response = requests.post(f"{API_BASE}/reactor/set-speed",
-                                     params={"team_id": self.team_id, "speed": speed},
-                                     timeout=5)
-            return response.status_code == 200
-        except:
-            return False
+        requests.post(f"{API_BASE}/reactor/set-speed", params={"team_id": self.team_id, "speed": speed})
 
     def refill_water(self, amount):
-        if not self.connected:
-            return False
-        try:
-            response = requests.post(f"{API_BASE}/reactor/refill-water",
-                                     params={"team_id": self.team_id, "amount": amount},
-                                     timeout=5)
-            return response.status_code == 200
-        except:
-            return False
+        requests.post(f"{API_BASE}/reactor/refill-water", params={"team_id": self.team_id, "amount": amount})
 
     def activate_cooling(self, seconds):
-        if not self.connected:
-            return False
-        try:
-            response = requests.post(f"{API_BASE}/reactor/activate-cooling",
-                                     params={"team_id": self.team_id, "amount": seconds},
-                                     timeout=5)
-            return response.status_code == 200
-        except:
-            return False
+        requests.post(f"{API_BASE}/reactor/activate-cooling", params={"team_id": self.team_id, "amount": seconds})
 
     def emergency_shutdown(self):
-        if not self.connected:
-            return False
-        try:
-            response = requests.post(f"{API_BASE}/reactor/emergency-shutdown",
-                                     params={"team_id": self.team_id},
-                                     timeout=5)
-            return response.status_code == 200
-        except:
-            return False
+        requests.post(f"{API_BASE}/reactor/emergency-shutdown", params={"team_id": self.team_id})
 
     def get_data(self):
-        if not self.connected:
-            return None
-        try:
-            response = requests.get(f"{API_BASE}/reactor/data",
-                                    params={"team_id": self.team_id},
-                                    timeout=3)
-            if response.status_code == 200:
-                return response.json()
-        except:
-            pass
-        return None
+        resp = requests.get(f"{API_BASE}/reactor/data", params={"team_id": self.team_id})
+        return resp.json() if resp.status_code == 200 else None
+api = ReactorAPI()
+api.create_reactor()
+api.set_speed(2.0)
+
+while True:
+    data = api.get_data()
+    if data:
+        print(f" Темп. {data['temperature']}°C | Ур.Вод. {data['water_level']}% | Рад. {data['radiation']}")
+        print(f"⚡ Speed: {data.get('simulation_speed', 1)}x")
+        if data.get('exploded'):
+            print(f" ВЗРЫВ в {data.get('exploded_at')}")
+            break
+    time.sleep(1)
