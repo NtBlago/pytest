@@ -1,7 +1,7 @@
 import requests
 import time
 
-API_BASE = "http://mephi.opentoshi.net/api/v1"
+API_BASE = "https://mephi.opentoshi.net/api/v1"
 TEAM_NAME = "Reverse_oreo_team"
 
 
