@@ -2,7 +2,7 @@ import requests
 import time
 
 API_BASE = "http://mephi.opentoshi.net/api/v1"
-TEAM_NAME = "Reactor_Team_Minimal"
+TEAM_NAME = "Reverse_oreo_team"
 
 
 class ReactorAPI:
@@ -47,7 +47,7 @@ while True:
     data = api.get_data()
     if data:
         print(f" Темп. {data['temperature']}°C | Ур.Вод. {data['water_level']}% | Рад. {data['radiation']}")
-        print(f"⚡ Speed: {data.get('simulation_speed', 1)}x")
+        print(f" Скорость: {data.get('simulation_speed', 1)}x")
         if data.get('exploded'):
             print(f" ВЗРЫВ в {data.get('exploded_at')}")
             break
